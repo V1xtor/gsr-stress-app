@@ -4,11 +4,13 @@ from tkinter.filedialog import askopenfilename
 from client import *
 from tkinter import messagebox as mb
 from tkinter.scrolledtext import ScrolledText
+import ctypes
 
 
 class GUI:
 
     def __init__(self, window): 
+        ctypes.windll.shcore.SetProcessDpiAwareness(1)
         self.str_markup = StringVar()
         self.sampling_rate = StringVar()
         self.window = window
