@@ -80,7 +80,7 @@ class gsrHandler:
                         (2 / m) * ((np.array(adwin_list).var()) ** 2) * np.log((2 * np.log(n)) / delta)) + (
                                       2 / (3 * m)) * np.log((2 * np.log(n)) / delta)
 
-
+                # если пройден порог на повышение
                 if abs(mean_w0 - mean_w1) >= eps_cut and not stress and mean_w0 - mean_w1 < 0:
                     stress = True
                     adwin_list = w1
@@ -89,6 +89,7 @@ class gsrHandler:
                     self.x_stress_sax.append(i - len(w1))
                     self.y_stress_sax.append(self.sax_data[i - len(w1)])
                     break
+                # если пройден порог на понижение
                 elif abs(mean_w0 - mean_w1) >= eps_cut and stress and mean_w0 - mean_w1 > 0:
                     stress = False
                     adwin_list = w1
@@ -96,6 +97,7 @@ class gsrHandler:
                     print(f"Change detected at SAX index {i}")
                     self.x_stress_sax.append(i)
                     self.y_stress_sax.append(val)
+                # если пройден порог на понижение, но уже ставили метку конца стресса, но сигнал стал ещё ниже
                 elif abs(mean_w0 - mean_w1) >= eps_cut and not stress and mean_w0 - mean_w1 > 0 and self.x_stress_sax:
                     stress = False
                     adwin_list = w1
@@ -103,6 +105,7 @@ class gsrHandler:
                     print(f"Change detected at SAX index {i}")
                     self.x_stress_sax[-1] = i
                     self.y_stress_sax[-1] = val
+                # если пройден порог на понижение, но до этого стресса «не было» — значит сигнал начался со стресса
                 elif abs(mean_w0 - mean_w1) >= eps_cut and not stress and mean_w0 - mean_w1 > 0:
                     stress = False
                     adwin_list = w1
@@ -175,12 +178,14 @@ class gsrHandler:
                 self.y_stress_full.append(bio2_signal_f[-1])
 
             # проверяем, нет ли впереди ямки
-            list_for_check = list(bio2_signal_f[int((x + 0.5) * self.aggregate_period):(x + 2) * self.aggregate_period])
-            potential_extremum = min(list_for_check)
             if (x + 1) * self.aggregate_period < len(bio2_signal_f) and x != 0:
-                if potential_extremum <= bio2_signal_f[int((x + self.shift_const) * self.aggregate_period)]:
-                    self.x_stress_full[-1] += len(list_for_check) - 1 - list_for_check[::-1].index(potential_extremum)
-                    self.y_stress_full[-1] = bio2_signal_f[int(self.x_stress_full[-1])]
+                list_for_check = list(bio2_signal_f[int((x + 0.5) * self.aggregate_period):(x + 2) * self.aggregate_period])
+            # if list_for_check:
+                potential_extremum = min(list_for_check)
+                if (x + 1) * self.aggregate_period < len(bio2_signal_f) and x != 0:
+                    if potential_extremum <= bio2_signal_f[int((x + self.shift_const) * self.aggregate_period)]:
+                        self.x_stress_full[-1] += len(list_for_check) - 1 - list_for_check[::-1].index(potential_extremum)
+                        self.y_stress_full[-1] = bio2_signal_f[int(self.x_stress_full[-1])]
 
             # проверяем, нет ли сзади ямки
             if (x + 1) * self.aggregate_period < len(bio2_signal_f) and x != 0:
