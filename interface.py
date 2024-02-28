@@ -70,7 +70,12 @@ class GUI:
     def markup_error_window(self):
         if self.tGSR and self.sampling_rate.get() and not self.markuped:
             self.markuped = 1
-            self.tGSR.send_markup(int(self.sampling_rate.get()))
+            try:
+                self.tGSR.send_markup(int(self.sampling_rate.get()))
+            except ConnectionRefusedError:
+                msg = "The connection to the server could not be established."
+                mb.showerror("Error", msg)
+                return
             markup = self.tGSR.set_markup()
             self.str_markup.set(markup)
             labels = list(map(float, markup.split()))
@@ -109,7 +114,13 @@ class GUI:
                 msg = "Invalid file format!"
                 mb.showerror("Error", msg)
                 return
-            self.tGSR.send_raw_data()
+            try:
+                self.tGSR.send_raw_data()
+            except ConnectionRefusedError:
+                msg = "The connection to the server could not be established."
+                mb.showerror("Error", msg)
+                self.tGSR = ''
+                return
             self.st.delete('1.0', tkinter.END)
             self.st.insert('2.0', 'Selected file: ' + self.get_user_path())
         else:
