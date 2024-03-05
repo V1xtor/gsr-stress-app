@@ -1,0 +1,15 @@
+Marking the GSR signal for stress —
+An application based on the tkinter library that allows you to mark up the GSR signal for stress, display the graph along with the markup,
+and also apply your own markup to the signal.
+
+First, you need to download the file with the GSR signal by click the «Select GSR file» button (after that, the raw data will be sent to the server).
+
+Important! You need to download a file in CSV format! It should contain a column that is a GSR signal with the name 'eda'!
+
+Then you need to enter the sampling rate of your signal.
+
+And click the «Mark up the signal» button (after that, the array of labels will be sent to the server).
+
+Then, using the slider at the bottom and the corresponding buttons, you can add your own markup to the graph. 
+To do this, place the slider in the right place and click the «Apply» button — the label will be placed on the chart, but not saved. 
+To save the label, click the «Submit» button. All saved tags will be sent to the server.
