@@ -5,6 +5,8 @@ from client import *
 from tkinter import messagebox as mb
 from tkinter.scrolledtext import ScrolledText
 import ctypes
+import sys
+import os
 
 
 class GUI:
@@ -144,9 +146,21 @@ class GUI:
         self.tGSR.send_user_markup()
 
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
 if __name__ == '__main__':
     window = tkinter.Tk()
-    help_text = open('help_menu.txt', 'r', encoding='utf-8')
+    help_menu_path = resource_path('help_menu.txt')
+    help_text = open(help_menu_path, 'r', encoding='utf-8')
     gui = GUI(window, help_text.read())
     window.mainloop()
     try:
